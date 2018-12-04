@@ -22,7 +22,7 @@ public:
 		return false;
 	}
 
-	ChecksumParser(File& file, int startingValue) : value(startingValue) {
+	ChecksumParser(File& file) {
 		matches[2] = 0;
 		matches[3] = 0;
 
@@ -42,6 +42,57 @@ public:
     operator int() const { return value; }
 };
 
+class PackageFinder {
+	std::string value;
+
+public:
+	std::string commonCharacters(std::string linea, std::string lineb) {
+		std::string common = "";
+		for (auto ita = linea.begin(), itb = lineb.begin(); ita != linea.end() && itb != lineb.end(); ) {
+			if (*ita == *itb) {
+				common += *ita;
+			}
+			ita++;
+			itb++;
+		}
+		return common;
+	}
+
+	// Check if there is a character in the line which occurs exactly twice
+	bool almostequal(std::string linea, std::string lineb) {
+		int differences = 0;
+		for (auto ita = linea.begin(), itb = lineb.begin(); ita != linea.end() && itb != lineb.end(); ) {
+			if (*ita++ != *itb++) {
+				differences++;
+			}
+
+			if (differences > 1) {
+				return false;
+			}
+		}
+		if (differences == 0) {
+			return false;
+		} 
+		return true;
+	}
+
+	PackageFinder(File& file) {
+		std::vector<std::string> lines = file.getLines();
+
+		for (std::string linea : lines) {
+			for (std::string lineb : lines) {
+				if (almostequal(linea, lineb)) {
+					value = commonCharacters(linea, lineb);
+					return;
+				}
+			}
+		}
+	}
+
+	operator std::string() const { return value; }
+};
+
+
 int main(int argc, char** args) {
     std::cout << "Day1" << std::endl;
     
@@ -51,5 +102,7 @@ int main(int argc, char** args) {
 	}
 
     File file(fileName);
-    std::cout << "Part 1" << std::endl << std::to_string(ChecksumParser(file, 0)) << std::endl;
+    std::cout << "Part 1" << std::endl << std::to_string(ChecksumParser(file)) << std::endl;
+	std::string package = PackageFinder(file);
+	std::cout << "Part 2" << std::endl << package << std::endl;
 }
