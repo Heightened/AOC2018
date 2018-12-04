@@ -1,33 +1,8 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
 
-class File {
-    std::ifstream fileStream;
-
-	std::vector<std::string> lines;
-public:
-    File(char* fileName) : fileStream(std::ifstream(fileName)) {
-        std::cout << "Opening " << fileName << std::endl;
-
-		std::string line;
-		while (true) {
-			std::getline(fileStream, line);
-
-			if (line != "") {
-				lines.push_back(line);
-			}
-			else {
-				break;
-			}
-		}
-    }
-
-	std::vector<std::string> getLines() {
-		return lines;
-	}
-};
+#include "../tools/file.h"
 
 class Parser1 {
     int value;
